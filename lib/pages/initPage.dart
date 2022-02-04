@@ -33,12 +33,12 @@ class _InitPageState extends State<InitPage> {
         },
         items: const [
           BottomNavigationBarItem(
-              label: "Главная",
-              icon: Icon(CupertinoIcons.home)
+              label: "Наряд",
+              icon: Icon(CupertinoIcons.bell_fill)
           ),
           BottomNavigationBarItem(
-              label: "Профиль",
-              icon: Icon(CupertinoIcons.profile_circled)
+              label: "Заявки",
+              icon: Icon(CupertinoIcons.doc)
           ),
           BottomNavigationBarItem(
               label: "Настройки",

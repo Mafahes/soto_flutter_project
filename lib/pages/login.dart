@@ -21,37 +21,21 @@ class _LoginPageState extends State<LoginPage> {
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
-
-    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
   @override
@@ -73,23 +57,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Авторизация', style: TextStyle(fontSize: 17),),
+      ),
       backgroundColor: CupertinoColors.systemGroupedBackground,
-      body: SafeArea(
+      child: SafeArea(
         child: Column(
           children: [
             Expanded(
-              flex: 2,
-              child: Center(
-                child: Text('Авторизация', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 30, fontFamily: 'San Francisco'),),
-              )
-            ),
-            Expanded(
-              flex: 3,
+              flex: 1,
               child: Column(
                 children: [
                   CupertinoFormSection.insetGrouped(
-                      header: const Text('Данные'),
+                      header: const Text('Введите данные для входа'),
                       children: [
                         CupertinoFormRow(
                           child: CupertinoTextFormFieldRow(
@@ -97,9 +78,9 @@ class _LoginPageState extends State<LoginPage> {
 
                             }),
                             controller: login,
-                            placeholder: 'Введите E-Mail',
+                            placeholder: 'Введите номер',
                           ),
-                          prefix: Text('E-Mail'),
+                          prefix: Text('Табельный номер'),
                         ),
                         CupertinoFormRow(
                           child: CupertinoTextFormFieldRow(
@@ -115,29 +96,39 @@ class _LoginPageState extends State<LoginPage> {
                       ]
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
-                  CupertinoButton(
-                      child: Text('Авторизоваться'),
-                      color: CupertinoColors.activeBlue,
-                      disabledColor: CupertinoColors.opaqueSeparator,
-                      onPressed: login.text.isEmpty || password.text.isEmpty ? null : () {
-                        ApiClient().logIn(login.text, password.text, true).then((value) {
-                          if(value == null) {
-                            const snackBar = SnackBar(
-                              content: Text('Ошибка, неверные данные.'),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                            return;
-                          };
-                          Navigator.of(context).pushAndRemoveUntil(CupertinoPageRoute(builder: (ctx) => InitPage()),
-                                  (route) => false);
-                          const snackBar = SnackBar(
-                            content: Text('Вы успешно авторизованы!'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        });
-                      }
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: CupertinoButton(
+                              child: Text('Войти'),
+                              color: CupertinoColors.activeBlue,
+                              disabledColor: CupertinoColors.opaqueSeparator,
+                              onPressed: login.text.isEmpty || password.text.isEmpty ? null : () {
+                                ApiClient().logIn(login.text, password.text, true).then((value) {
+                                  if(value == null) {
+                                    const snackBar = SnackBar(
+                                      content: Text('Ошибка, неверные данные.'),
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                    return;
+                                  };
+                                  Navigator.of(context).pushAndRemoveUntil(CupertinoPageRoute(builder: (ctx) => InitPage()),
+                                          (route) => false);
+                                  const snackBar = SnackBar(
+                                    content: Text('Вы успешно авторизованы!'),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                });
+                              }
+                          ),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
