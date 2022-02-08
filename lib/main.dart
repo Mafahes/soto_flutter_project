@@ -34,10 +34,11 @@ class _MainWidgetState extends State<MainWidget> {
       home: FutureBuilder(
           future: LocalService().getKey(''),
           builder: (context, snapshot) {
-            print(snapshot.connectionState);
-            print(snapshot.hasData);
             if(snapshot.connectionState == ConnectionState.waiting) {
               return LoadingSpinner();
+            }
+            if(snapshot.hasData) {
+              return InitPage();
             }
             return LoginPage();
       }),

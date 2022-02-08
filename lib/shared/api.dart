@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Prefs {
-  static const API_URL = 'https://nomenclature.3dcafe.ru/';
+  static const API_URL = 'https://soto.3dcafe.ru/';
 }
 class DioClient {
   Dio dio = Dio();
@@ -55,6 +57,7 @@ class LocalService {
 class ApiClient {
   Future logIn(String login, String password, bool save) async {
     try {
+      var a = {"login": login, "password": password};
       Response resp = await DioClient().dio.post('${Prefs.API_URL}Auth/Login',
           data: {"login": login, "password": password});
       LocalService().setKey(resp.data['text']);

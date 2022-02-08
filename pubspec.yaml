@@ -20,6 +20,8 @@ dependencies:
   dio: 3.0.0
   shared_preferences: ^2.0.1
   geolocator: ^8.0.3
+  flutter_neumorphic: ^3.2.0
+  flutter_svg: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -32,15 +34,18 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/logo.png
+    - assets/menu/icon1.svg
+    - assets/menu/icon2.svg
+    - assets/menu/icon3.svg
   #   - images/a_dot_ham.jpeg
 
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/Lato-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
