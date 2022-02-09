@@ -55,11 +55,12 @@ class LocalService {
   }
 }
 class ApiClient {
-  Future logIn(String login, String password, bool save) async {
+  Future logIn(String login, String password, bool save, [String? role]) async {
     try {
       var a = {"login": login, "password": password};
       Response resp = await DioClient().dio.post('${Prefs.API_URL}Auth/Login',
           data: {"login": login, "password": password});
+      if(role != null && role != resp.data['role']) return resp.data;
       LocalService().setKey(resp.data['text']);
       return resp.data;
     } catch(err) {

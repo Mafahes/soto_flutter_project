@@ -22,6 +22,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController login = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool loading = false;
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -44,6 +45,10 @@ class _LoginPageState extends State<LoginPage> {
   }
   @override
   void initState() {
+    setState(() {
+      login.text = '2352';
+      password.text = 'XHY14n';
+    });
     super.initState();
   }
 
@@ -55,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return true ? Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xff2d3034),
       body: SafeArea(
         child: Column(
@@ -145,15 +150,29 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Spacer(),
             GestureDetector(
-                onTap: login.text.isEmpty || password.text.isEmpty ? null : () {
+                onTap: () {
+                  if(loading) return;
                   HapticFeedback.lightImpact();
-                  ApiClient().logIn(login.text.toString(), password.text, true).then((value) {
+                  if(login.text.isEmpty || password.text.isEmpty) {
+                    const snackBar = SnackBar(
+                      backgroundColor: Colors.orange,
+                      content: Text('Заполнены не все поля'),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+                  setState(() {
+                    loading = true;
+                  });
+                  ApiClient().logIn(login.text.toString(), password.text, true, 'Санитар').then((value) {
+                    setState(() {
+                      loading = false;
+                    });
                     FocusScope.of(context).unfocus();
-                    print(value);
-                    if(value == null) {
-                      const snackBar = SnackBar(
+                    if(value == null || value['role'] != 'Санитар') {
+                      var snackBar = SnackBar(
                         backgroundColor: Colors.red,
-                        content: Text('Ошибка, неверные данные.'),
+                        content: Text(value != null && value['role'] != 'Санитар' ? 'Доступ запрещен' : 'Ошибка, неверные данные.'),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       return;
@@ -189,88 +208,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 25, vertical: 17),
                 child: Center(
-                  child: Text(
+                  child: loading ? SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                    ),
+                  ) : Text(
                     'Войти', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
-    ) : CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Авторизация', style: TextStyle(fontSize: 17),),
-      ),
-      backgroundColor: CupertinoColors.systemGroupedBackground,
-      child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  CupertinoFormSection.insetGrouped(
-                      header: const Text('Введите данные для входа'),
-                      children: [
-                        CupertinoFormRow(
-                          child: CupertinoTextFormFieldRow(
-                            onChanged: (v) => setState(() {
-
-                            }),
-                            controller: login,
-                            placeholder: 'Введите номер',
-                          ),
-                          prefix: Text('Табельный номер'),
-                        ),
-                        CupertinoFormRow(
-                          child: CupertinoTextFormFieldRow(
-                            obscureText: true,
-                            onChanged: (v) => setState(() {
-
-                            }),
-                            controller: password,
-                            placeholder: 'Введите пароль',
-                          ),
-                          prefix: Text('Пароль'),
-                        )
-                      ]
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: CupertinoButton(
-                              child: Text('Войти'),
-                              color: CupertinoColors.activeBlue,
-                              disabledColor: CupertinoColors.opaqueSeparator,
-                              onPressed: login.text.isEmpty || password.text.isEmpty ? null : () {
-                                ApiClient().logIn(login.text, password.text, true).then((value) {
-                                  if(value == null) {
-                                    const snackBar = SnackBar(
-                                      content: Text('Ошибка, неверные данные.'),
-                                    );
-                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                    return;
-                                  };
-                                  Navigator.of(context).pushAndRemoveUntil(CupertinoPageRoute(builder: (ctx) => InitPage()),
-                                          (route) => false);
-                                  const snackBar = SnackBar(
-                                    content: Text('Вы успешно авторизованы!'),
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                });
-                              }
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
               ),
             )
           ],
