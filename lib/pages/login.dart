@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:soto_project/pages/initPage.dart';
 import 'package:soto_project/shared/api.dart';
 
@@ -23,26 +24,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController login = TextEditingController();
   TextEditingController password = TextEditingController();
   bool loading = false;
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition();
-  }
   @override
   void initState() {
     setState(() {
@@ -127,6 +108,9 @@ class _LoginPageState extends State<LoginPage> {
 
                   });
                 },
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
                 controller: password,
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -164,19 +148,18 @@ class _LoginPageState extends State<LoginPage> {
                   setState(() {
                     loading = true;
                   });
-                  ApiClient().logIn(login.text.toString(), password.text, true, 'Санитар').then((value) {
+                  ApiClient().logIn(login.text.toString(), password.text, true, 'Санитар').then((value) async {
                     setState(() {
                       loading = false;
                     });
                     FocusScope.of(context).unfocus();
                     if(value == null || value['role'] != 'Санитар') {
-                      var snackBar = SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         backgroundColor: Colors.red,
                         content: Text(value != null && value['role'] != 'Санитар' ? 'Доступ запрещен' : 'Ошибка, неверные данные.'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      ));
                       return;
-                    };
+                    }
                     Navigator.of(context).pushAndRemoveUntil(CupertinoPageRoute(builder: (ctx) => InitPage()),
                             (route) => false);
                     const snackBar = SnackBar(

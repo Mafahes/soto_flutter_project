@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart' as DioReq;
 
 class Prefs {
   static const API_URL = 'https://soto.3dcafe.ru/';
@@ -13,15 +15,6 @@ class DioClient {
     if(sp.get('token') != null) {
       dio.options.headers['Authorization'] = 'Bearer ${sp.get('token')}';
     }
-    // dio.interceptors.add(InterceptorsWrapper(
-    //     onResponse: (Response resp) async {
-    //       if(resp.statusCode == 500) {
-    //         await dio.post('${Prefs.API_URL}api/users/logs/add?log=CODE_${resp.statusCode}_${resp.request.path.replaceAll('https://nomenclature.3dcafe.ru/', '')}__TOKEN_${resp?.request?.headers['Authorization'] != null ? resp?.request?.headers['Authorization'].replaceAll('Bearer ', '') : ''}');
-    //       }
-    //       return resp;
-    //     }
-    // ));
-    // print(dio.options.headers);
     return dio;
   }
 }
@@ -61,10 +54,39 @@ class ApiClient {
       Response resp = await DioClient().dio.post('${Prefs.API_URL}Auth/Login',
           data: {"login": login, "password": password});
       if(role != null && role != resp.data['role']) return resp.data;
-      LocalService().setKey(resp.data['text']);
+      await LocalService().setKey(resp.data['text']);
+      var data = await OneSignal.shared.getDeviceState();
+      print({
+        "userId": data?.userId
+      });
+      await ApiClient().setPush(data?.userId ?? '', resp.data['text']);
       return resp.data;
     } catch(err) {
       print(err);
+      return null;
+    }
+  }
+  Future<dynamic> setPush(String userId, String token) async {
+    Dio dio = await DioClient().instance();
+    try {
+      dio.options.headers["authorization"] = 'Bearer ' + token;
+      var response = await dio.get(
+          '${Prefs.API_URL}api/users/pushChanel?pushChanel=$userId');
+      return response.data;
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future<dynamic> sendCoords(data) async {
+    Dio dio = await DioClient().instance();
+    var token = await LocalService().getKey('');
+    try {
+      var response = await dio.post(
+          '${Prefs.API_URL}api/Positions', data: data);
+      return response.data;
+    } catch(e, s) {
+      print(e);
       return null;
     }
   }
