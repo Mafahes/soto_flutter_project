@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as DioReq;
+import 'package:soto_project/shared/interface/Order.dart';
 
 import 'interface/Self.dart';
 enum WorkStatus {
@@ -14,8 +15,18 @@ enum WorkStatus {
   onPause,
   onChange
 }
+enum OrderStatus {
+  newOrder,
+  notConfirmed,
+  submitted,
+  onPlace,
+  onWayMorgue,
+  morgueSubmitted,
+  denided
+}
 class Prefs {
   static const API_URL = 'https://soto.3dcafe.ru/';
+  static const orderStatuses = ["Новая", "Назначена не подтверждена", "Принята", "Прибыл на место", "Следует в морг", "Сдал в морг", "Отклонена"];
 }
 class DioClient {
   Dio dio = Dio();
@@ -112,6 +123,28 @@ class ApiClient {
       var response = await dio.get(
           '${Prefs.API_URL}api/user/0');
       return selfFromJson(jsonEncode(response.data));
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future<List<Order>?> getNewOrders() async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.get(
+          '${Prefs.API_URL}api/Orders/new');
+      return orderFromJson(jsonEncode(response.data));
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future<List<Order>?> getActiveOrders() async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.get(
+          '${Prefs.API_URL}api/Orders/active');
+      return orderFromJson(jsonEncode(response.data));
     } catch(e, s) {
       print(e);
       return null;

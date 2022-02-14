@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soto_project/pages/login.dart';
-import 'package:soto_project/pages/naryad.dart';
+import 'package:soto_project/pages/naryad/naryad.dart';
 import 'package:soto_project/pages/settings.dart';
 import 'package:soto_project/shared/api.dart';
 
