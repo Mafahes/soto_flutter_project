@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     setState(() {
       login.text = '2352';
-      password.text = 'XHY14n';
+      password.text = 'i1zUdI';
     });
     super.initState();
   }

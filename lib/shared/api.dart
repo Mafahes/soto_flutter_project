@@ -1,10 +1,19 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as DioReq;
 
+import 'interface/Self.dart';
+enum WorkStatus {
+  onNotWork,
+  onWork,
+  onPause,
+  onChange
+}
 class Prefs {
   static const API_URL = 'https://soto.3dcafe.ru/';
 }
@@ -15,6 +24,12 @@ class DioClient {
     if(sp.get('token') != null) {
       dio.options.headers['Authorization'] = 'Bearer ${sp.get('token')}';
     }
+    // dio.interceptors.add(InterceptorsWrapper(
+    //     onResponse: (Response resp) async {
+    //       print(resp.statusCode);
+    //       return resp;
+    //     }
+    // ));
     return dio;
   }
 }
@@ -60,6 +75,7 @@ class ApiClient {
         "userId": data?.userId
       });
       await ApiClient().setPush(data?.userId ?? '', resp.data['text']);
+      await ApiClient().setStatus(WorkStatus.onWork);
       return resp.data;
     } catch(err) {
       print(err);
@@ -87,6 +103,27 @@ class ApiClient {
       return response.data;
     } catch(e, s) {
       print(e);
+      return null;
+    }
+  }
+  Future<Self?> getSelf() async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.get(
+          '${Prefs.API_URL}api/user/0');
+      return selfFromJson(jsonEncode(response.data));
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future setStatus(WorkStatus status) async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.post(
+          '${Prefs.API_URL}api/user/set-state?state=${status.index}');
+      return true;
+    } catch(e, s) {
       return null;
     }
   }

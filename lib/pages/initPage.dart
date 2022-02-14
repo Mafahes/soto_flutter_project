@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:soto_project/pages/login.dart';
 import 'package:soto_project/pages/naryad.dart';
 import 'package:soto_project/pages/settings.dart';
 import 'package:soto_project/shared/api.dart';
@@ -111,38 +114,56 @@ class _InitPageState extends State<InitPage> {
     return Scaffold(
       body: Stack(
         children: [
-          CupertinoTabScaffold(
-            tabBar: CupertinoTabBar(
-              backgroundColor: Color(0xff2f3034),
-              onTap: (i) {
-                setState(() {
-                  index = i;
+          Scaffold(
+              backgroundColor: Color(0xff2d2f33),
+              bottomNavigationBar: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    ),
+                    child: BottomNavigationBar(
+                      currentIndex: index,
+                      backgroundColor: Color(0xff2b2d31),
+                      onTap: (i) {
+                        setState(() {
+                          index = i;
+                        });
+                      },
+                      items: <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                            icon: SvgPicture.asset('assets/menu/icon1.svg', width: 20, height: 20, color: index == 0 ? null : Colors.white,),
+                            title: Text('Наряд', style: TextStyle(fontFamily: 'Lato', color: index == 0 ? null : Color(0xffDBDBDB)))
+                        ),
+                        BottomNavigationBarItem(
+                            icon: SvgPicture.asset('assets/menu/icon2.svg', width: 20, height: 20, color: index == 1 ? null : Colors.white,),
+                            title: Text('Заявки', style: TextStyle(fontFamily: 'Lato', color: index == 1 ? null : Color(0xffDBDBDB)))
+                        ),
+                        BottomNavigationBarItem(
+                            icon: SvgPicture.asset('assets/menu/icon3.svg', width: 20, height: 20, color: index == 2 ? null : Colors.white,),
+                            title: Text('Настройки', style: TextStyle(fontFamily: 'Lato', color: index == 2 ? null : Color(0xffDBDBDB)))
+                        ),
+                      ],
+                    ),
+                  )
+              ),
+            body: [NaryadPage(), NaryadPage(), SettingsPage(
+              onExit: () {
+                debouncer.cancel();
+                LocalService().delKey().then((value) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (ctx) => LoginPage()
+                      ), (route) => false);
                 });
-                HapticFeedback.lightImpact();
               },
-              items: [
-                BottomNavigationBarItem(
-                    label: 'Наряд',
-                    icon: SvgPicture.asset('assets/menu/icon1.svg', width: 20, height: 20, color: index == 0 ? null : Colors.white,)
-                ),
-                BottomNavigationBarItem(
-                    label: "Заявки",
-                    icon: SvgPicture.asset('assets/menu/icon2.svg', width: 20, height: 20, color: index == 1 ? null : Colors.white,)
-                ),
-                BottomNavigationBarItem(
-                    label: "Настройки",
-                    icon: SvgPicture.asset('assets/menu/icon3.svg', width: 20, height: 20, color: index == 2 ? null : Colors.white,)
-                ),
-              ],
-            ),
-            tabBuilder: (BuildContext context, int index) {
-              switch (index) {
-                case 0:
-                  return NaryadPage();
-                default:
-                  return NaryadPage();
-              }
-            },
+            )][index],
           ),
           !geoPickerError ? Container() : GestureDetector(
             onTap: () {

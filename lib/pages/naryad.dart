@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soto_project/shared/api.dart';
 
 class NaryadPage extends StatefulWidget {
@@ -31,9 +32,16 @@ class _NaryadPageState extends State<NaryadPage> {
           children: [
             Container(
               height: 100,
-              child: Center(
-                child: Text(
-                  'Заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 28, fontWeight: FontWeight.bold),),
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                children: [
+                  Image.asset('assets/logo.png'),
+                  Center(
+                    child: Text(
+                      'Заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                  )
+                ],
               ),
             ),
             Expanded(

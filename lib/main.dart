@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:soto_project/pages/initPage.dart';
 import 'package:soto_project/pages/loading.dart';
@@ -32,18 +33,21 @@ class _MainWidgetState extends State<MainWidget> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
-      home: FutureBuilder(
-          future: LocalService().getKey(''),
-          builder: (context, snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingSpinner();
-            }
-            if(snapshot.hasData) {
-              return InitPage();
-            }
-            return LoginPage();
-      }),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder: () => MaterialApp(
+        home: FutureBuilder(
+            future: LocalService().getKey(''),
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting) {
+                return LoadingSpinner();
+              }
+              if(snapshot.hasData) {
+                return InitPage();
+              }
+              return LoginPage();
+        }),
+      ),
     );
   }
 }
