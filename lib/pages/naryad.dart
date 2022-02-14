@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:soto_project/pages/settings.dart';
 import 'package:soto_project/shared/api.dart';
 
 class NaryadPage extends StatefulWidget {
@@ -47,7 +49,10 @@ class _NaryadPageState extends State<NaryadPage> {
             Expanded(
               flex: 1,
               child: Center(
-                child: Text('У вас нет активных заявок.', style: TextStyle(color: Color(0xff7F8489), fontSize: 16, fontFamily: 'Lato'),),
+                child: true ? TextButton(
+                    onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => SettingsPage(onExit: () {})));
+                }, child: Text('hldf')) : Text('У вас нет активных заявок.', style: TextStyle(color: Color(0xff7F8489), fontSize: 16, fontFamily: 'Lato'),),
               ),
             )
           ],

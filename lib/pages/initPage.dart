@@ -27,10 +27,10 @@ enum GeoStatus {
 }
 class _InitPageState extends State<InitPage> {
   var index = 0;
-  // Stream<Position> positionStream = Geolocator.getPositionStream(locationSettings: const LocationSettings(
-  //   accuracy: LocationAccuracy.high,
-  //   distanceFilter: 100,
-  // ));
+  Stream<Position> positionStream = Geolocator.getPositionStream(locationSettings: const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    distanceFilter: 1,
+  ));
   bool geoFinished = true;
   bool geoPickerError = false;
   late Timer debouncer;
