@@ -36,6 +36,7 @@ class _MainWidgetState extends State<MainWidget> {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: () => MaterialApp(
+        navigatorKey: Prefs.navigatorKey,
         home: FutureBuilder(
             future: LocalService().getKey(''),
             builder: (context, snapshot) {

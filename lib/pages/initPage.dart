@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soto_project/pages/login.dart';
 import 'package:soto_project/pages/naryad/naryad.dart';
+import 'package:soto_project/pages/order/order.dart';
 import 'package:soto_project/pages/settings.dart';
 import 'package:soto_project/shared/api.dart';
 
@@ -29,7 +30,7 @@ class _InitPageState extends State<InitPage> {
   var index = 0;
   Stream<Position> positionStream = Geolocator.getPositionStream(locationSettings: const LocationSettings(
     accuracy: LocationAccuracy.high,
-    distanceFilter: 1,
+    distanceFilter: 30,
   ));
   bool geoFinished = true;
   bool geoPickerError = false;
@@ -154,7 +155,7 @@ class _InitPageState extends State<InitPage> {
                     ),
                   )
               ),
-            body: [NaryadPage(), NaryadPage(), SettingsPage(
+            body: [NaryadPage(), OrderPage(), SettingsPage(
               onExit: () {
                 debouncer.cancel();
                 LocalService().delKey().then((value) {

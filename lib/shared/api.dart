@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as DioReq;
+import 'package:soto_project/pages/login.dart';
 import 'package:soto_project/shared/interface/Order.dart';
 
 import 'interface/Self.dart';
@@ -27,6 +30,7 @@ enum OrderStatus {
 class Prefs {
   static const API_URL = 'https://soto.3dcafe.ru/';
   static const orderStatuses = ["Новая", "Назначена не подтверждена", "Принята", "Прибыл на место", "Следует в морг", "Сдал в морг", "Отклонена"];
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 class DioClient {
   Dio dio = Dio();
@@ -35,12 +39,25 @@ class DioClient {
     if(sp.get('token') != null) {
       dio.options.headers['Authorization'] = 'Bearer ${sp.get('token')}';
     }
-    // dio.interceptors.add(InterceptorsWrapper(
-    //     onResponse: (Response resp) async {
-    //       print(resp.statusCode);
-    //       return resp;
-    //     }
-    // ));
+    dio.interceptors.add(InterceptorsWrapper(
+      onError: (DioError resp) async {
+        if(true) {
+          LocalService().delKey();
+          try {
+            Prefs.navigatorKey.currentState?.pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) => LoginPage()), (route) => false);
+          } catch(e) {
+            print(e);
+          }
+        }
+        return resp;
+      },
+        onResponse: (Response resp) async {
+          if(resp.statusCode != 200) {
+            print('ERRORRRRR');
+          }
+          return resp;
+        }
+    ));
     return dio;
   }
 }
@@ -134,6 +151,17 @@ class ApiClient {
       var response = await dio.get(
           '${Prefs.API_URL}api/Orders/new');
       return orderFromJson(jsonEncode(response.data));
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future editOrder(data) async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.put(
+          '${Prefs.API_URL}api/Orders', data: data);
+      return true;
     } catch(e, s) {
       print(e);
       return null;

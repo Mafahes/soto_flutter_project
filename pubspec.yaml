@@ -24,6 +24,7 @@ dependencies:
   flutter_svg: ^1.0.3
   onesignal_flutter: ^3.2.8
   flutter_screenutil: ^5.2.0
+  mapbox_gl: ^0.15.0
 
 dev_dependencies:
   flutter_test:
@@ -38,6 +39,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo.png
+    - assets/marker.png
+    - assets/car.png
     - assets/menu/icon1.svg
     - assets/menu/icon2.svg
     - assets/menu/icon3.svg

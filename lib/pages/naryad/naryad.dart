@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:soto_project/pages/naryad/currentNaryad.dart';
 import 'package:soto_project/pages/settings.dart';
 import 'package:soto_project/shared/api.dart';
 import 'package:soto_project/shared/interface/Order.dart';
@@ -18,11 +20,14 @@ class NaryadPage extends StatefulWidget {
 
 class _NaryadPageState extends State<NaryadPage> {
   List<Order>? orders = [];
+  bool loading = true;
   @override
   void initState() {
     ApiClient().getNewOrders().then((value) {
+      if(!mounted) return;
       setState(() {
         orders = value;
+        loading = false;
       });
     });
     super.initState();
@@ -57,21 +62,44 @@ class _NaryadPageState extends State<NaryadPage> {
             ),
             Expanded(
               flex: 1,
-              child: orders?.length == 0 ? Center(
+              child: loading ? Center(
+                child: CircularProgressIndicator(),
+              ) : orders?.length == 0 ? Center(
                 child: Text('У вас нет активных нарядов.', style: TextStyle(color: Color(0xff7F8489), fontSize: 16, fontFamily: 'Lato'),),
               ) : ListView(
-                children: orders?.map((e) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
-                  decoration: BoxDecoration(
-                      color: Color(0xff4F54C8),
-                      borderRadius: BorderRadius.circular(14)
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 17),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text('Наряд #${e.id}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontWeight: FontWeight.w500, fontSize: 18),),
-                    ],
+                children: orders?.map((e) => GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(builder: (c) => CurrentNaryadPage(order: e))
+                    ).then((v) {
+                      if(v == true) {
+                        setState(() {
+                          loading = true;
+                        });
+                        ApiClient().getNewOrders().then((value) {
+                          if(!mounted) return;
+                          setState(() {
+                            orders = value;
+                            loading = false;
+                          });
+                        });
+                      }
+                    });
+                    HapticFeedback.lightImpact();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Color(0xff4F54C8),
+                        borderRadius: BorderRadius.circular(14)
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 17),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('Наряд #${e.id}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontWeight: FontWeight.w500, fontSize: 18),),
+                      ],
+                    ),
                   ),
                 )).toList() ?? [],
               ),
