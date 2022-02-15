@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soto_project/pages/naryad/naryadMap.dart';
 import 'package:soto_project/shared/api.dart';
@@ -21,6 +22,27 @@ class CurrentNaryadPage extends StatefulWidget {
 }
 
 class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
+  BoxDecoration blueButton = BoxDecoration(
+      color: Color(0xff2c2e33),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(width: 1.0, color: Color(0xff7A7FF3)),
+      gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xff7A7FF3),
+            Color(0xff254BAF)
+          ]
+      ),
+      boxShadow: [
+        BoxShadow(
+            offset: Offset(4, 4),
+            spreadRadius: 7,
+            blurRadius: 7,
+            color: Color.fromRGBO(31, 36, 39, 0.6)
+        )
+      ]
+  );
   @override
   void initState() {
     super.initState();
@@ -71,94 +93,171 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                       HapticFeedback.lightImpact();
                     }),
                     SizedBox(height: 11),
-                    containedText("ФИО умершего", false, false, '${widget.order.secondName ?? ''} ${widget.order.firstName?.substring(0, 1)}.${widget.order.patronymic?.substring(0, 1)}.', () {
-                      HapticFeedback.lightImpact();
-                    }),
-                    SizedBox(height: 11),
-                    containedText("Возраст умершего", false, false, '${widget.order.age}', () {
-                      HapticFeedback.lightImpact();
-                    }),
-                    SizedBox(height: 72),
-                    Text('Адрес морга', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
-                    SizedBox(height: 10),
-                    containedText(widget.order.source ?? '', true, true, '', () {
-                      HapticFeedback.lightImpact();
-                    }),
-                    SizedBox(height: 10),
-                    containedText('Доп.сведения', false, true, '', () {
-                      HapticFeedback.lightImpact();
-                    }),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
-                        margin: EdgeInsets.only(bottom: 11),
-                        decoration: BoxDecoration(
-                            color: Color(0xff2c2e33),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(width: 1.0, color: Color(0xff7A7FF3)),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff7A7FF3),
-                                Color(0xff254BAF)
-                              ]
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(4, 4),
-                                  spreadRadius: 7,
-                                  blurRadius: 7,
-                                  color: Color.fromRGBO(31, 36, 39, 0.6)
-                              )
-                            ]
-                        ),
-                        child: Center(
-                          child: Text('Принять', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
-                        ),
-                      ),
+                    ...Conditional.list(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state != 4,
+                        widgetBuilder: (c) => [
+                          containedText("ФИО умершего", false, false, '${widget.order.secondName ?? ''} ${widget.order.firstName?.substring(0, 1)}.${widget.order.patronymic?.substring(0, 1)}.', () {
+                            HapticFeedback.lightImpact();
+                          }),
+                          SizedBox(height: 11),
+                          containedText("Возраст умершего", false, false, '${widget.order.age}', () {
+                            HapticFeedback.lightImpact();
+                          }),
+                          SizedBox(height: 72),
+                          Text('Адрес морга', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
+                          SizedBox(height: 10),
+                          containedText(widget.order.source ?? '', true, true, '', () {
+                            HapticFeedback.lightImpact();
+                          }),
+                          SizedBox(height: 10),
+                          containedText('Доп.сведения', false, true, '', () {
+                            HapticFeedback.lightImpact();
+                          }),
+                          Spacer(),
+                        ],
+                        fallbackBuilder: (c) => [
+                          Text('hello')
+                        ]
                     ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        ApiClient().editOrder({
-                          ...widget.order.toJson(),
-                          "status": 6
-                        }).then((value) {
-                          Navigator.of(context).pop(true);
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
-                        margin: EdgeInsets.only(bottom: 11),
-                        decoration: BoxDecoration(
-                            color: Color(0xffFF6666),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(width: 1.0, color: Color(0xffF7ABA6)),
-                            // gradient: LinearGradient(
-                            //     begin: Alignment.topLeft,
-                            //     end: Alignment.bottomRight,
-                            //     colors: [
-                            //       Color(0xffFF6666)
-                            //     ]
-                            // ),
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(4, 4),
-                                  spreadRadius: 7,
-                                  blurRadius: 7,
-                                  color: Color.fromRGBO(31, 36, 39, 0.6)
-                              )
-                            ]
+                    Conditional.single(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state == 1,
+                        widgetBuilder: (c) => GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ApiClient().editOrder({
+                              ...widget.order.toJson(),
+                              "state": 2
+                            }).then((value) {
+                              Navigator.of(context).pop(true);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: blueButton,
+                            child: Center(
+                              child: Text('Принять', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                            ),
+                          ),
                         ),
-                        child: Center(
-                          child: Text('Отклонить', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                        fallbackBuilder: (c) => Container()
+                    ),
+                    Conditional.single(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state == 2,
+                        widgetBuilder: (c) => GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ApiClient().editOrder({
+                              ...widget.order.toJson(),
+                              "state": 3
+                            }).then((value) {
+                              Navigator.of(context).pop(true);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: blueButton,
+                            child: Center(
+                              child: Text('Прибыл на место', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                            ),
+                          ),
                         ),
-                      ),
+                        fallbackBuilder: (c) => Container()
+                    ),
+                    Conditional.single(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state == 3,
+                        widgetBuilder: (c) => GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ApiClient().editOrder({
+                              ...widget.order.toJson(),
+                              "state": 4
+                            }).then((value) {
+                              Navigator.of(context).pop(true);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: blueButton,
+                            child: Center(
+                              child: Text('Выехал в морг', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                            ),
+                          ),
+                        ),
+                        fallbackBuilder: (c) => Container()
+                    ),
+                    Conditional.single(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state == 4,
+                        widgetBuilder: (c) => GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ApiClient().editOrder({
+                              ...widget.order.toJson(),
+                              "state": 5
+                            }).then((value) {
+                              Navigator.of(context).pop(true);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: blueButton,
+                            child: Center(
+                              child: Text('Сдал тело', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                            ),
+                          ),
+                        ),
+                        fallbackBuilder: (c) => Container()
+                    ),
+                    Conditional.single(
+                        context: context,
+                        conditionBuilder: (c) => widget.order.state == 2 || widget.order.state == 1,
+                        widgetBuilder: (c) => GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ApiClient().editOrder({
+                              ...widget.order.toJson(),
+                              "state": 6
+                            }).then((value) {
+                              Navigator.of(context).pop(true);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: BoxDecoration(
+                                color: Color(0xffFF6666),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(width: 1.0, color: Color(0xffF7ABA6)),
+                                // gradient: LinearGradient(
+                                //     begin: Alignment.topLeft,
+                                //     end: Alignment.bottomRight,
+                                //     colors: [
+                                //       Color(0xffFF6666)
+                                //     ]
+                                // ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(4, 4),
+                                      spreadRadius: 7,
+                                      blurRadius: 7,
+                                      color: Color.fromRGBO(31, 36, 39, 0.6)
+                                  )
+                                ]
+                            ),
+                            child: Center(
+                              child: Text('Отклонить', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                            ),
+                          ),
+                        ),
+                        fallbackBuilder: (c) => Container()
                     ),
                     SizedBox(height: 22,)
                   ],

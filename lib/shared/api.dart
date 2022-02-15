@@ -29,7 +29,7 @@ enum OrderStatus {
 }
 class Prefs {
   static const API_URL = 'https://soto.3dcafe.ru/';
-  static const orderStatuses = ["Новая", "Назначена не подтверждена", "Принята", "Прибыл на место", "Следует в морг", "Сдал в морг", "Отклонена"];
+  static const orderStatuses = ["Новая", "Не подтверждена", "Принята", "Прибыл на место", "Следует в морг", "Сдал в морг", "Отклонена"];
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 class DioClient {
