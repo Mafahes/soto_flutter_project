@@ -110,6 +110,24 @@ class ApiClient {
       return null;
     }
   }
+  Future<List<dynamic>> uploadFile(File file, [srcToken]) async {
+    try {
+      var dio = DioReq.Dio();
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString('token');
+      dio.options.headers["authorization"] = 'Bearer ' + (srcToken == null ? token : srcToken);
+      var form = DioReq.FormData.fromMap({
+        "uploadedFiles": await DioReq.MultipartFile.fromFile(file.path)
+      });
+      var response = await dio.post(
+          '${Prefs.API_URL}api/appfiles', data: form);
+      print(response.data);
+      return response.data;
+    } catch(e, s) {
+      print(e);
+      return [];
+    }
+  }
   Future<dynamic> setPush(String userId, String token) async {
     Dio dio = await DioClient().instance();
     try {
