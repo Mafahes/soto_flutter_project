@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -22,34 +23,34 @@ class NaryadMapPage extends StatefulWidget {
 
 class _NaryadMapPageState extends State<NaryadMapPage> {
   MapboxMapController? mapController;
-  Stream<Position> positionStream = Geolocator.getPositionStream(locationSettings: const LocationSettings(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 1,
-  ));
+  late Timer interval;
   @override
   void initState() {
-    positionStream.listen((event) async {
-      print('POSITIONED');
-      await mapController?.clearSymbols();
-      await mapController?.addSymbol(
-          SymbolOptions(
-            geometry: LatLng(widget.order.latitude, widget.order.longitude),
-            iconImage: "marker",
-          )
-      );
-      await mapController?.addSymbol(
-          SymbolOptions(
+
+    super.initState();
+  }
+  updateSymbols(event) async {
+    if(!mounted) return;
+    await mapController?.clearSymbols();
+    await mapController?.addSymbol(
+        SymbolOptions(
+          geometry: LatLng(widget.order.latitude, widget.order.longitude),
+          iconImage: "marker",
+        )
+    );
+    await mapController?.addSymbol(
+        SymbolOptions(
             geometry: LatLng(event.latitude, event.longitude),
             iconImage: "car",
             iconRotate: event.heading
-          )
-      );
-    });
-    super.initState();
+        )
+    );
   }
-
   @override
   void dispose() {
+    if(interval.isActive) {
+      interval.cancel();
+    }
     super.dispose();
   }
 
@@ -122,15 +123,26 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                         final ByteData bytes = await rootBundle.load("assets/marker.png");
                         final Uint8List list = bytes.buffer.asUint8List();
                         await c.addImage("marker", list);
+                        c.addSymbol(
+                            SymbolOptions(
+                              geometry: LatLng(widget.order.latitude, widget.order.longitude),
+                              iconImage: "marker",
+                            )
+                        );
                         final ByteData bytes2 = await rootBundle.load("assets/car.png");
                         final Uint8List list2 = bytes2.buffer.asUint8List();
                         await c.addImage("car", list2);
-                        c.addSymbol(
-                        SymbolOptions(
-                            geometry: LatLng(widget.order.latitude, widget.order.longitude),
-                            iconImage: "marker",
-                          )
-                        );
+                        var perm = await Geolocator.checkPermission();
+                        if(perm != LocationPermission.denied) {
+                          interval = Timer.periodic(Duration(seconds: 2), (timer) async {
+                            var perm = await Geolocator.checkPermission();
+                            if(perm != LocationPermission.denied) {
+                              Geolocator.getCurrentPosition().then((value) {
+                                updateSymbols(value);
+                              });
+                            }
+                          });
+                        }
                       },
                     ),
                   ),
