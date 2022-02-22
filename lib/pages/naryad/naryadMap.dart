@@ -113,6 +113,9 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                   Expanded(
                     flex: 1,
                     child: MapboxMap(
+                      annotationOrder: [
+                        AnnotationType.symbol
+                      ],
                       styleString: 'mapbox://styles/mafahes/ck7ytniby1cm81jlktlfxfuuh',
                       accessToken: 'sk.eyJ1IjoibWFmYWhlcyIsImEiOiJja3pud3B0bnkwNW1tMnBsaG1ieWJ5cG5pIn0.kipYW60b_4ZPN7RCL4meng',
                       initialCameraPosition: CameraPosition(target: LatLng(widget.order.latitude, widget.order.longitude), zoom: 12),
@@ -145,9 +148,6 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                         }
                       },
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
                   )
                 ],
               ),
