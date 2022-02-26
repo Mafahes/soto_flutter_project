@@ -77,7 +77,6 @@ class _NaryadPageState extends State<NaryadPage> {
                           loading = true;
                         });
                         ApiClient().getNewOrders().then((value) {
-                          if(!mounted) return;
                           setState(() {
                             orders = value;
                             loading = false;

@@ -9,9 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:soto_project/pages/naryad/fileList.dart';
 import 'package:soto_project/pages/naryad/naryadMap.dart';
 import 'package:soto_project/shared/api.dart';
 import 'package:soto_project/shared/interface/Order.dart';
+import 'package:soto_project/shared/interface/OrderById.dart';
 
 class CurrentNaryadPage extends StatefulWidget {
   final Order order;
@@ -50,8 +52,17 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
   TextEditingController desc = TextEditingController();
   List<int> files = [];
   bool loading = false;
+  OrderById? order;
   @override
   void initState() {
+    ApiClient().getOrderById(widget.order.id).then((value) {
+      setState(() {
+        order = value!;
+        order?.history = [];
+        order?.user = null;
+        order?.brigade = null;
+      });
+    });
     super.initState();
   }
 
@@ -79,14 +90,45 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                       Image.asset('assets/logo.png'),
                       Center(
                         child: Text(
-                          'Наряд №${widget.order.id}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                          'Наряд №${order?.id ?? '-'}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            child: Icon(
+                              Icons.file_download, color: Colors.white,),
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                    builder: (c) => FileListPage(order: order!))
+                              ).then((value) {
+                                if(value != null && value == []) return;
+                                setState(() {
+                                  order = null;
+                                });
+                                ApiClient().getOrderById(widget.order.id).then((value) {
+                                  setState(() {
+                                    order = value!;
+                                    order?.history = [];
+                                    order?.user = null;
+                                    order?.brigade = null;
+                                  });
+                                });
+                              });
+                            },
+                          )
+                        ],
                       )
                     ],
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: Container(
+                  child: order == null ? Center(
+                    child: CircularProgressIndicator(),
+                  ) : Container(
                     width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
@@ -95,7 +137,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                       children: [
                         Text('Адрес заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12.sp),),
                         SizedBox(height: 10),
-                        containedText(widget.order.address, true, true, '', () {
+                        containedText(order!.address, true, true, '', () {
                           Navigator.of(context).push(
                             CupertinoPageRoute(builder: (c) => NaryadMapPage(order: widget.order))
                           );
@@ -104,19 +146,22 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         SizedBox(height: 11),
                         ...Conditional.list(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state != 4,
+                            conditionBuilder: (c) => true == true,
                             widgetBuilder: (c) => [
-                              containedText("ФИО умершего", false, false, '${widget.order.secondName ?? ''} ${widget.order.firstName?.substring(0, 1)}.${widget.order.patronymic?.substring(0, 1)}.', () {
+                              containedText("ФИО умершего", false, false, '${order!.secondName ?? ''} ${order!.firstName?.substring(0, 1)}.${order!.patronymic?.substring(0, 1)}.', () {
                                 HapticFeedback.lightImpact();
                               }),
                               SizedBox(height: 11),
-                              containedText("Возраст умершего", false, false, '${widget.order.age}', () {
+                              containedText("Возраст умершего", false, false, '${order!.age}', () {
                                 HapticFeedback.lightImpact();
                               }),
-                              SizedBox(height: 72),
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                               Text('Адрес морга', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12.sp),),
                               SizedBox(height: 10),
-                              containedText(widget.order.source ?? '', true, true, '', () {
+                              containedText(order?.addressMorgue ?? 'Адрес отсутствует', true, true, '', () {
                                 HapticFeedback.lightImpact();
                               }),
                               SizedBox(height: 10),
@@ -174,12 +219,12 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state == 1,
+                            conditionBuilder: (c) => order!.state == 1,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
                                 ApiClient().editOrder({
-                                  ...widget.order.toJson(),
+                                  ...order!.toJson(),
                                   "state": 2
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
@@ -198,7 +243,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state == 2,
+                            conditionBuilder: (c) => order!.state == 2,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -206,7 +251,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                   loading = true;
                                 });
                                 ApiClient().editOrder({
-                                  ...widget.order.toJson(),
+                                  ...order!.toJson(),
                                   "state": 3
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
@@ -225,7 +270,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state == 3,
+                            conditionBuilder: (c) => order!.state == 3,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -233,7 +278,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                   loading = true;
                                 });
                                 ApiClient().editOrder({
-                                  ...widget.order.toJson(),
+                                  ...order!.toJson(),
                                   "state": 4
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
@@ -252,7 +297,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state == 4,
+                            conditionBuilder: (c) => order!.state == 4,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -260,7 +305,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                   loading = true;
                                 });
                                 ApiClient().editOrder({
-                                  ...widget.order.toJson(),
+                                  ...order!.toJson(),
                                   "state": 5
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
@@ -279,7 +324,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => widget.order.state == 2 || widget.order.state == 1,
+                            conditionBuilder: (c) => order!.state == 2 || order!.state == 1,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -287,7 +332,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                   loading = true;
                                 });
                                 ApiClient().editOrder({
-                                  ...widget.order.toJson(),
+                                  ...order!.toJson(),
                                   "state": 6
                                 }).then((value) {
                                   Navigator.of(context).pop(true);

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as DioReq;
 import 'package:soto_project/pages/login.dart';
 import 'package:soto_project/shared/interface/Order.dart';
+import 'package:soto_project/shared/interface/OrderById.dart';
 
 import 'interface/Self.dart';
 enum WorkStatus {
@@ -191,6 +192,17 @@ class ApiClient {
       var response = await dio.get(
           '${Prefs.API_URL}api/Orders/active');
       return orderFromJson(jsonEncode(response.data));
+    } catch(e, s) {
+      print(e);
+      return null;
+    }
+  }
+  Future<OrderById?> getOrderById(id) async {
+    Dio dio = await DioClient().instance();
+    try {
+      var response = await dio.get(
+          '${Prefs.API_URL}api/Orders/$id');
+      return orderByIdFromJson(jsonEncode(response.data));
     } catch(e, s) {
       print(e);
       return null;
