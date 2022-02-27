@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soto_project/pages/naryad/fileList.dart';
+import 'package:soto_project/pages/naryad/naryadDescription.dart';
 import 'package:soto_project/pages/naryad/naryadMap.dart';
 import 'package:soto_project/shared/api.dart';
 import 'package:soto_project/shared/interface/Order.dart';
@@ -95,7 +96,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          GestureDetector(
+                          order == null ? Container() : GestureDetector(
                             child: Icon(
                               Icons.file_download, color: Colors.white,),
                             onTap: () {
@@ -167,6 +168,9 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                               SizedBox(height: 10),
                               containedText('Доп.сведения', false, true, '', () {
                                 HapticFeedback.lightImpact();
+                                Navigator.of(context).push(
+                                  CupertinoPageRoute(builder: (c) => NaryadDescription(order: order!))
+                                );
                               }),
                               Spacer(),
                             ],

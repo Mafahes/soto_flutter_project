@@ -74,9 +74,21 @@ class _NaryadDescriptionState extends State<NaryadDescription> {
                           ),
                         ),
                         SizedBox(height: 28),
-                        Text('Адрес заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
+                        Text('Дополнительные сведения', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
                         SizedBox(height: 10),
-                        SizedBox(height: 20)
+                        Container(
+                          width: double.infinity,
+                          height: 250,
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xff4E47A8), width: 1.0),
+                            borderRadius: BorderRadius.circular(14)
+                          ),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              widget.order.addInformation ?? '', style: TextStyle(color: Colors.white, fontSize: 18),),
+                          ),
+                        )
                       ],
                     ),
                   ),
