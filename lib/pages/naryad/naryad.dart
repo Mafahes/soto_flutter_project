@@ -69,6 +69,7 @@ class _NaryadPageState extends State<NaryadPage> {
               ) : ListView(
                 children: orders?.map((e) => GestureDetector(
                   onTap: () {
+                    if(e.state == 5) return;
                     Navigator.of(context).push(
                       CupertinoPageRoute(builder: (c) => CurrentNaryadPage(order: e))
                     ).then((v) {

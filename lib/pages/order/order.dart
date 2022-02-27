@@ -67,6 +67,7 @@ class _OrderPageState extends State<OrderPage> {
               ) : ListView(
                 children: orders?.map((e) => GestureDetector(
                   onTap: () {
+                    if(e.state == 5) return;
                     HapticFeedback.lightImpact();
                     Navigator.of(context).push(
                         CupertinoPageRoute(builder: (c) => CurrentNaryadPage(order: e))

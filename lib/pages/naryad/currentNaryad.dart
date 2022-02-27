@@ -161,7 +161,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                               ),
                               Text('Адрес морга', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12.sp),),
                               SizedBox(height: 10),
-                              containedText(order?.addressMorgue ?? 'Адрес отсутствует', true, true, '', () {
+                              containedText((order?.addressMorgue ?? '') == '' ? 'Адрес отсутствует' : order?.addressMorgue ?? 'Адрес отсутствует', true, true, '', () {
                                 HapticFeedback.lightImpact();
                               }),
                               SizedBox(height: 10),
