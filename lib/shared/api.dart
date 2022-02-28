@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart' as DioReq;
 import 'package:soto_project/pages/login.dart';
@@ -113,23 +114,29 @@ class ApiClient {
     }
   }
   Future<String> loadFileViewer(String url) async {
-    var dio = DioReq.Dio();
-    var dir = await getApplicationDocumentsDirectory();
-    print(dir.path);
-    var exists = await File("${dir.path}/Downloads/${url.split('/').last}").exists();
-    if(exists == true) {
-      return "${dir.path}/Downloads/${url.split('/').last}";
-    }
-    try {
-      await dio.download(url, "${dir.path}/Downloads/${url.split('/').last}");
-      return "${dir.path}/Downloads/${url.split('/').last}";
-    } catch(e, s) {
-      print('Попытка загрузить файл для дальнейшего просмотра в окне PDFViewer');
-      // await Sentry.captureException(
-      //   e,
-      //   stackTrace: s,
-      // );
-      print(e);
+    var perm = await Permission.storage.request();
+    if(perm.isGranted) {
+      var dio = await DioClient().instance();
+      var dir = await getApplicationDocumentsDirectory();
+      print("${dir.path}/${url.split('/').last}");
+      Directory gbu = Directory('/storage/emulated/0/Download/GBU');
+      if(await gbu.exists() == false) {
+        await gbu.create();
+      }
+      var exists = await File("/storage/emulated/0/Download/GBU/${url.split('/').last}").exists();
+      if(exists == true) {
+        return "/storage/emulated/0/Download/GBU/${url.split('/').last}";
+      }
+      try {
+        await dio.download(url, "/storage/emulated/0/Download/GBU/${url.split('/').last}");
+        return "/storage/emulated/0/Download/GBU/${url.split('/').last}";
+      } catch(e) {
+        print('error');
+        print(e);
+        return '';
+      }
+    } else {
+      print('not permitted');
       return '';
     }
   }
