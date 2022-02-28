@@ -149,7 +149,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                             context: context,
                             conditionBuilder: (c) => true == true,
                             widgetBuilder: (c) => [
-                              containedText("ФИО умершего", false, false, '${order!.secondName ?? ''} ${order!.firstName?.substring(0, 1)}.${order!.patronymic?.substring(0, 1)}.', () {
+                              containedText("ФИО умершего", false, false, '${order!.secondName ?? ''} ${order?.firstName == null || order?.firstName == "" ? '' : order?.firstName?.substring(0, 1) ?? ''}.${order?.patronymic == null || order?.patronymic == "" ? '' : order?.patronymic?.substring(0, 1)}.', () {
                                 HapticFeedback.lightImpact();
                               }),
                               SizedBox(height: 11),

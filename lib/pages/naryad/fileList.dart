@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:soto_project/shared/api.dart';
 import 'package:soto_project/shared/interface/OrderById.dart';
 
@@ -70,6 +71,10 @@ class _FileListPageState extends State<FileListPage> {
                     ...?order?.files.map((e) => Column(
                       children: [
                         containedText('Файл ${e.fileId}', false, true, '', () {
+                          ApiClient().loadFileViewer(e.file['fileUrl']).then((value) {
+                            Share.shareFiles([value]);
+                          });
+                          HapticFeedback.lightImpact();
 
                         }, () async {
                           HapticFeedback.lightImpact();
