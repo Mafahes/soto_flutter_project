@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -21,13 +22,16 @@ class NaryadPage extends StatefulWidget {
 class _NaryadPageState extends State<NaryadPage> {
   List<Order>? orders = [];
   bool loading = true;
+  late Timer timer;
   @override
   void initState() {
-    ApiClient().getNewOrders().then((value) {
-      if(!mounted) return;
-      setState(() {
-        orders = value;
-        loading = false;
+    timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      ApiClient().getNewOrders().then((value) {
+        if(!mounted) return;
+        setState(() {
+          orders = value;
+          loading = false;
+        });
       });
     });
     super.initState();
@@ -35,6 +39,9 @@ class _NaryadPageState extends State<NaryadPage> {
 
   @override
   void dispose() {
+    if(timer.isActive) {
+      timer.cancel();
+    }
     super.dispose();
   }
 

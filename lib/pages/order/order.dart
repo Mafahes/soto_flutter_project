@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_is_empty, prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,12 +22,15 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   List<Order>? orders = [];
   bool loading = true;
+  late Timer timer;
   @override
   void initState() {
-    ApiClient().getActiveOrders().then((value) {
-      setState(() {
-        orders = value;
-        loading = false;
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      ApiClient().getActiveOrders().then((value) {
+        setState(() {
+          orders = value;
+          loading = false;
+        });
       });
     });
     super.initState();
@@ -33,6 +38,9 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   void dispose() {
+    if(timer.isActive) {
+      timer.cancel();
+    }
     super.dispose();
   }
 
