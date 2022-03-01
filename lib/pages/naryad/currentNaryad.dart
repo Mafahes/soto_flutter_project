@@ -54,6 +54,18 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
   List<int> files = [];
   bool loading = false;
   OrderById? order;
+  List<DropdownMenuItem<String>> get dropdownItems {
+    List<DropdownMenuItem<String>> menuItems = [
+      DropdownMenuItem(child: Text("Поломка"),value: "Поломка"),
+      DropdownMenuItem(child: Text("ДТП"),value: "ДТП"),
+      DropdownMenuItem(child: Text("Обед"),value: "Обед"),
+      DropdownMenuItem(child: Text("ТО"),value: "ТО"),
+      DropdownMenuItem(child: Text("Дезинфекция"),value: "Дезинфекция"),
+      DropdownMenuItem(child: Text("Спецнаряд"),value: "Спецнаряд"),
+      DropdownMenuItem(child: Text("Снятие с линии бригады"),value: "Снятие с линии бригады"),
+    ];
+    return menuItems;
+  }
   @override
   void initState() {
     ApiClient().getOrderById(widget.order.id).then((value) {
@@ -330,14 +342,61 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                             context: context,
                             conditionBuilder: (c) => order!.state == 2 || order!.state == 1,
                             widgetBuilder: (c) => GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 HapticFeedback.lightImpact();
                                 setState(() {
                                   loading = true;
                                 });
+                                String selectedValue = 'Поломка';
+                                var submitted = await showDialog(
+                                    context: context,
+                                    builder: (ctx) => StatefulBuilder(
+                                      builder: (ctx, setState) {
+                                        return Dialog(
+                                          child: Container(
+                                            height: 300,
+                                            padding: EdgeInsets.all(30),
+                                            child: Column(
+                                              children: [
+                                                Text('Отклонить заявку', style: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Lato')),
+                                                SizedBox(
+                                                    height: 40
+                                                ),
+                                                DropdownButton(
+                                                  value: selectedValue,
+                                                  items: dropdownItems,
+                                                  onChanged: (String? value) {
+                                                    setState(() {
+                                                      selectedValue = value ?? '';
+                                                    });
+                                                  },
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop(selectedValue);
+                                                        },
+                                                        child: Text('Принять')
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                );
                                 ApiClient().editOrder({
                                   ...order!.toJson(),
-                                  "state": 6
+                                  "state": 6,
+                                  "cause": submitted ?? ''
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
                                 });

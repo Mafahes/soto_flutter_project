@@ -74,7 +74,7 @@ class _OrderPageState extends State<OrderPage> {
                 child: Text('У вас нет активных заявок.', style: TextStyle(color: Color(0xff7F8489), fontSize: 16, fontFamily: 'Lato'),),
               ) : ListView(
                 children: orders?.map((e) => GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if(e.state == 5) return;
                     HapticFeedback.lightImpact();
                     Navigator.of(context).push(

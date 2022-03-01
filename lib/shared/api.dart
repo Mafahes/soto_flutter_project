@@ -44,7 +44,7 @@ class DioClient {
     }
     dio.interceptors.add(InterceptorsWrapper(
       onError: (DioError resp) async {
-        if(true) {
+        if(resp.response.statusCode == 401) {
           LocalService().delKey();
           try {
             Prefs.navigatorKey.currentState?.pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) => LoginPage()), (route) => false);
