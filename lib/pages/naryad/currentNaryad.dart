@@ -393,6 +393,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                       },
                                     )
                                 );
+                                if(submitted == null) return;
                                 ApiClient().editOrder({
                                   ...order!.toJson(),
                                   "state": 6,
