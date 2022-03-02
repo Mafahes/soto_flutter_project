@@ -30,6 +30,7 @@ dependencies:
   share_plus: ^3.0.4
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
+  wakelock: ^0.6.1+1
 
 dev_dependencies:
   flutter_test:

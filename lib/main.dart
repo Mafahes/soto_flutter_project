@@ -5,6 +5,7 @@ import 'package:soto_project/pages/initPage.dart';
 import 'package:soto_project/pages/loading.dart';
 import 'package:soto_project/pages/login.dart';
 import 'package:soto_project/shared/api.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() {
   runApp(MainWidget());
@@ -21,6 +22,7 @@ class MainWidget extends StatefulWidget {
 class _MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
+    Wakelock.enable();
     OneSignal.shared.setAppId('156c114c-1d07-4dcb-a3a3-52bf483be026');
     super.initState();
   }
