@@ -106,7 +106,7 @@ class ApiClient {
         "userId": data?.userId
       });
       await ApiClient().setPush(data?.userId ?? '', resp.data['text']);
-      await ApiClient().setStatus(WorkStatus.onWork);
+      await ApiClient().setStatus(WorkStatus.onWork, '');
       return resp.data;
     } catch(err) {
       print(err);
@@ -237,11 +237,11 @@ class ApiClient {
       return null;
     }
   }
-  Future setStatus(WorkStatus status) async {
+  Future setStatus(WorkStatus status, String cause) async {
     Dio dio = await DioClient().instance();
     try {
       var response = await dio.post(
-          '${Prefs.API_URL}api/user/set-state?state=${status.index}');
+          '${Prefs.API_URL}api/user/set-state?state=${status.index}&cause=$cause');
       return true;
     } catch(e, s) {
       return null;

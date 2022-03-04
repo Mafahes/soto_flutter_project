@@ -22,6 +22,15 @@ class _SettingsPageState extends State<SettingsPage> {
   Self? user;
   bool loading1 = false;
   bool loading2 = false;
+  List<DropdownMenuItem<String>> get dropdownItems {
+    List<DropdownMenuItem<String>> menuItems = [
+      DropdownMenuItem(child: Text("Конец смены"),value: "Конец смены"),
+      DropdownMenuItem(child: Text("Поломка автомобиля"),value: "Поломка автомобиля"),
+      DropdownMenuItem(child: Text("Тех. Обслуживание"),value: "Тех. Обслуживание"),
+      DropdownMenuItem(child: Text("Перерыв"),value: "Перерыв")
+    ];
+    return menuItems;
+  }
   @override
   parseData() {
     ApiClient().getSelf().then((value) {
@@ -80,13 +89,71 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingContainer('Табельный номер №${user?.inits ?? '-'}'),
                     Spacer(),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         if(loading1) return;
                         HapticFeedback.lightImpact();
                         setState(() {
                           loading1 = true;
                         });
-                        ApiClient().setStatus(user?.state == 2 ? WorkStatus.onWork : WorkStatus.onPause).then((value) {
+                        if(user?.state != 2) {
+                          String selectedValue = 'Конец смены';
+                          var submitted = await showDialog(
+                              context: context,
+                              builder: (ctx) => StatefulBuilder(
+                                builder: (ctx, setState) {
+                                  return Dialog(
+                                    child: Container(
+                                      height: 300,
+                                      padding: EdgeInsets.all(30),
+                                      child: Column(
+                                        children: [
+                                          Text('Укажите причину', style: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Lato')),
+                                          SizedBox(
+                                              height: 40
+                                          ),
+                                          DropdownButton(
+                                            value: selectedValue,
+                                            items: dropdownItems,
+                                            onChanged: (String? value) {
+                                              setState(() {
+                                                selectedValue = value ?? '';
+                                              });
+                                            },
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Container(),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop(selectedValue);
+                                                  },
+                                                  child: Text('Принять')
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                          );
+                          if(submitted == null) {
+                            setState(() {
+                              loading1 = false;
+                            });
+                            return;
+                          }
+                          ApiClient().setStatus(user?.state == 2 ? WorkStatus.onWork : WorkStatus.onPause, selectedValue).then((value) {
+                            parseData();
+                          });
+                          return;
+                        }
+                        ApiClient().setStatus(user?.state == 2 ? WorkStatus.onWork : WorkStatus.onPause, '').then((value) {
                           parseData();
                         });
                       },
@@ -107,18 +174,18 @@ class _SettingsPageState extends State<SettingsPage> {
                           ]
                         ),
                         child: Center(
-                          child: Text(loading1 ? 'Загрузка..' : user?.state == 2 ? 'Возобновить' : 'Приостановить', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                          child: Text(loading1 ? 'Загрузка..' : user?.state == 2 ? 'Возобновить' : 'Завершить смену', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
                         ),
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         if(loading2) return;
                         HapticFeedback.lightImpact();
                         setState(() {
                           loading2 = true;
                         });
-                        ApiClient().setStatus(WorkStatus.onNotWork).then((value) {
+                        ApiClient().setStatus(WorkStatus.onNotWork, '').then((value) {
                           widget.onExit();
                         });
                       },
@@ -147,7 +214,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ]
                         ),
                         child: Center(
-                          child: Text(loading2 ? 'Загрузка..' : 'Завершить смену', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                          child: Text(loading2 ? 'Загрузка..' : 'Выход', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
                         ),
                       ),
                     )
