@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soto_project/shared/api.dart';
+import 'package:soto_project/shared/interface/Order.dart';
 import 'package:soto_project/shared/interface/Self.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -185,6 +186,28 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {
                           loading2 = true;
                         });
+                        List<Order>? orders1 = [];
+                        List<Order>? orders2 = [];
+                        try {
+                          orders1 = await ApiClient().getNewOrders();
+                          orders2 = (await ApiClient().getActiveOrders())?.where((element) => element.state == 0 || element.state == 1).toList();
+                        } catch(e) {
+                          orders1 = [];
+                          orders2 = [];
+                        }
+                        if((orders1?.isNotEmpty ?? true) || (orders2?.isNotEmpty ?? true)) {
+                          showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text('Ошибка'),
+                                content: Text('Завершите все активные заявки'),
+                              )
+                          );
+                          setState(() {
+                            loading2 = false;
+                          });
+                          return;
+                        }
                         ApiClient().setStatus(WorkStatus.onNotWork, '').then((value) {
                           widget.onExit();
                         });

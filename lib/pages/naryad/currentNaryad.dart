@@ -152,7 +152,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         SizedBox(height: 10),
                         containedText(order!.address, true, true, '', () {
                           Navigator.of(context).push(
-                            CupertinoPageRoute(builder: (c) => NaryadMapPage(order: widget.order))
+                            CupertinoPageRoute(builder: (c) => NaryadMapPage(order: order!, isMorgue: false,))
                           );
                           HapticFeedback.lightImpact();
                         }),
@@ -176,6 +176,11 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                               SizedBox(height: 10),
                               containedText((order?.addressMorgue ?? '') == '' ? 'Адрес отсутствует' : order?.addressMorgue ?? 'Адрес отсутствует', true, true, '', () {
                                 HapticFeedback.lightImpact();
+                                if(!(order?.latitudeMorg == null || order?.longitudeMorg == null)) {
+                                  Navigator.of(context).push(
+                                    CupertinoPageRoute(builder: (c) => NaryadMapPage(order: order!, isMorgue: true,))
+                                  );
+                                }
                               }),
                               SizedBox(height: 10),
                               containedText('Доп.сведения', false, true, '', () {

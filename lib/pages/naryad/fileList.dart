@@ -72,7 +72,7 @@ class _FileListPageState extends State<FileListPage> {
                       children: [
                         containedText('Файл ${e.fileId}', false, true, '', () {
                           print(e.file);
-                          ApiClient().loadFileViewer(e.file['fullUrl']).then((value) {
+                          ApiClient().loadFileViewer(e.file.fullUrl).then((value) {
                             Share.shareFiles([value]);
                           });
                           HapticFeedback.lightImpact();

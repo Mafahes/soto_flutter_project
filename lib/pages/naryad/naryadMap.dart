@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -9,11 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:soto_project/shared/interface/Order.dart';
+import 'package:soto_project/shared/interface/OrderById.dart';
 
 class NaryadMapPage extends StatefulWidget {
-  final Order order;
-  NaryadMapPage({Key? key, required this.order}) : super(key: key);
+  final OrderById order;
+  final bool isMorgue;
+  NaryadMapPage({Key? key, required this.order, required this.isMorgue}) : super(key: key);
 
   @override
   _NaryadMapPageState createState() {
@@ -102,7 +102,7 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                           ),
                         ),
                         SizedBox(height: 28),
-                        Text('Адрес заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
+                        Text('Адрес ${widget.isMorgue ? 'морга' : 'заявки'}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
                         SizedBox(height: 10),
                         containedText(widget.order.address, true, true, '', () {
                         }),
