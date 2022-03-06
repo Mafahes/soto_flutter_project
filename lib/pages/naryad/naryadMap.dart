@@ -104,7 +104,7 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                         SizedBox(height: 28),
                         Text('Адрес ${widget.isMorgue ? 'морга' : 'заявки'}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12),),
                         SizedBox(height: 10),
-                        containedText(widget.order.address, true, true, '', () {
+                        containedText(widget.isMorgue ? widget.order.addressMorgue : widget.order.address, true, true, '', () {
                         }),
                         SizedBox(height: 20)
                       ],
@@ -126,7 +126,7 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                         final ByteData bytes = await rootBundle.load("assets/marker.png");
                         final Uint8List list = bytes.buffer.asUint8List();
                         await c.addImage("marker", list);
-                        c.addSymbol(
+                        await c.addSymbol(
                             SymbolOptions(
                               geometry: LatLng(widget.order.latitude, widget.order.longitude),
                               iconImage: "marker",
@@ -174,9 +174,8 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
           children: [
             Expanded(
               child: Text(
-                text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 18),),
+                text, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 18),),
             ),
-            arrow ? Icon(Icons.arrow_forward_ios_rounded, color: Colors.white,) : Container(),
             subtext.isEmpty ? Container() : Text(subtext, style: TextStyle(fontFamily: 'Lato', color: Color(0xffC6C6C8), fontSize: 18),)
           ],
         ),
