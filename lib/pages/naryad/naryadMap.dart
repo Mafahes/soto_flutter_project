@@ -31,20 +31,30 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
   }
   updateSymbols(event) async {
     if(!mounted) return;
-    await mapController?.clearSymbols();
-    await mapController?.addSymbol(
-        SymbolOptions(
-          geometry: LatLng(widget.order.latitude, widget.order.longitude),
-          iconImage: "marker",
-        )
-    );
-    await mapController?.addSymbol(
-        SymbolOptions(
-            geometry: LatLng(event.latitude, event.longitude),
-            iconImage: "car",
-            iconRotate: event.heading
-        )
-    );
+    try {
+      await mapController?.clearSymbols();
+      await mapController?.addSymbol(
+          SymbolOptions(
+            geometry: LatLng(widget.order.latitude, widget.order.longitude),
+            iconImage: "marker",
+          )
+      );
+      await mapController?.addSymbol(
+          SymbolOptions(
+              geometry: LatLng(event.latitude, event.longitude),
+              iconImage: "car",
+              iconRotate: event.heading
+          )
+      );
+    } catch(e) {
+      showDialog(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: Text('Внутренняя ошибка карт'),
+            content: Text('Невозможно создать метки: ${e.toString()}'),
+          )
+      );
+    }
   }
   @override
   void dispose() {
@@ -120,31 +130,41 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                       accessToken: 'sk.eyJ1IjoibWFmYWhlcyIsImEiOiJja3pud3B0bnkwNW1tMnBsaG1ieWJ5cG5pIn0.kipYW60b_4ZPN7RCL4meng',
                       initialCameraPosition: CameraPosition(target: LatLng(widget.order.latitude, widget.order.longitude), zoom: 12),
                       onMapCreated: (c) async {
-                        setState(() {
-                          mapController = c;
-                        });
-                        final ByteData bytes = await rootBundle.load("assets/marker.png");
-                        final Uint8List list = bytes.buffer.asUint8List();
-                        await c.addImage("marker", list);
-                        await c.addSymbol(
-                            SymbolOptions(
-                              geometry: LatLng(widget.order.latitude, widget.order.longitude),
-                              iconImage: "marker",
-                            )
-                        );
-                        final ByteData bytes2 = await rootBundle.load("assets/car.png");
-                        final Uint8List list2 = bytes2.buffer.asUint8List();
-                        await c.addImage("car", list2);
-                        var perm = await Geolocator.checkPermission();
-                        if(perm != LocationPermission.denied) {
-                          interval = Timer.periodic(Duration(seconds: 2), (timer) async {
-                            var perm = await Geolocator.checkPermission();
-                            if(perm != LocationPermission.denied) {
-                              Geolocator.getCurrentPosition().then((value) {
-                                updateSymbols(value);
-                              });
-                            }
+                        try {
+                          setState(() {
+                            mapController = c;
                           });
+                          final ByteData bytes = await rootBundle.load("assets/marker.png");
+                          final Uint8List list = bytes.buffer.asUint8List();
+                          await c.addImage("marker", list);
+                          await c.addSymbol(
+                              SymbolOptions(
+                                geometry: LatLng(widget.isMorgue ? widget.order.latitudeMorg : widget.order.latitude, widget.isMorgue ? widget.order.longitudeMorg : widget.order.longitude),
+                                iconImage: "marker",
+                              )
+                          );
+                          final ByteData bytes2 = await rootBundle.load("assets/car.png");
+                          final Uint8List list2 = bytes2.buffer.asUint8List();
+                          await c.addImage("car", list2);
+                          var perm = await Geolocator.checkPermission();
+                          if(perm != LocationPermission.denied) {
+                            interval = Timer.periodic(Duration(seconds: 2), (timer) async {
+                              var perm = await Geolocator.checkPermission();
+                              if(perm != LocationPermission.denied) {
+                                Geolocator.getCurrentPosition().then((value) {
+                                  updateSymbols(value);
+                                });
+                              }
+                            });
+                          }
+                        } catch(e) {
+                          showDialog(
+                              context: context,
+                              builder: (c) => AlertDialog(
+                                title: Text('Внутренняя ошибка карт'),
+                                content: Text('Невозможно создать метки: ${e.toString()}'),
+                              )
+                          );
                         }
                       },
                     ),

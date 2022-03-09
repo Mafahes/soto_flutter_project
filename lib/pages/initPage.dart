@@ -64,7 +64,7 @@ class _InitPageState extends State<InitPage> {
         geoFinished = false;
       });
       _determinePosition().then((value) async {
-        await ApiClient().sendCoords(value.toJson());
+        await ApiClient().sendCoords({"longitude":37.5892496,"latitude":55.739844,"timestamp":1646830509075,"accuracy":14.100000381469727,"altitude":211.09999084472656,"floor":null,"heading":328.8981628417969,"speed":0.019396239891648293,"speed_accuracy":0,"is_mocked":false});
         setState(() {
           geoFinished = true;
           geoPickerError = false;

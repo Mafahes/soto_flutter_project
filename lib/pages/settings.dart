@@ -70,8 +70,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [
                   Image.asset('assets/logo.png'),
                   Center(
-                    child: Text(
-                      'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                        SizedBox(height: 4),
+                        Text(' (v1.0)', style: TextStyle(color: Colors.grey, fontSize: 8),)
+                      ],
+                    ),
                   )
                 ],
               ),
