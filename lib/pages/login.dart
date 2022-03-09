@@ -27,8 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     setState(() {
-      login.text = '';
-      password.text = '';
+      login.text = '2781';
+      password.text = '9uxFc7';
     });
     super.initState();
   }

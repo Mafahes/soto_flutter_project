@@ -157,12 +157,15 @@ class _NaryadMapPageState extends State<NaryadMapPage> {
                               }
                             });
                           }
-                        } catch(e) {
+                        } catch(e, s) {
                           showDialog(
                               context: context,
                               builder: (c) => AlertDialog(
                                 title: Text('Внутренняя ошибка карт'),
-                                content: Text('Невозможно создать метки: ${e.toString()}'),
+                                content: SingleChildScrollView(
+                                  child: Text(
+                                      'Невозможно создать метки: ${e.toString()}\n\n lng:${widget.order.longitude}, lat:${widget.order.latitude}'),
+                                ),
                               )
                           );
                         }

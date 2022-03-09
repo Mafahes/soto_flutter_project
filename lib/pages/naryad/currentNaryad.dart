@@ -151,9 +151,12 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         Text('Адрес заявки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 12.sp),),
                         SizedBox(height: 10),
                         containedText(order!.address, true, true, '', () {
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(builder: (c) => NaryadMapPage(order: order!, isMorgue: false,))
-                          );
+                          if(!(order?.latitude == null || order?.longitude == null)) {
+                            Navigator.of(context).push(
+                                CupertinoPageRoute(builder: (c) => NaryadMapPage(order: order!, isMorgue: false,))
+                            );
+                          }
+
                           HapticFeedback.lightImpact();
                         }),
                         SizedBox(height: 11),

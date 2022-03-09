@@ -76,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         Text(
                           'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
                         SizedBox(height: 4),
-                        Text(' (v1.0)', style: TextStyle(color: Colors.grey, fontSize: 8),)
+                        Text(' (v1.1)', style: TextStyle(color: Colors.grey, fontSize: 8),)
                       ],
                     ),
                   )
