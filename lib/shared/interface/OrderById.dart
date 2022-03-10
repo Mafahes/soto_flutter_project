@@ -87,11 +87,13 @@ class OrderById {
     this.source,
     this.files,
     this.history,
+    this.comment,
   });
 
   int id;
   User user;
   int brigadeId;
+  String comment;
   Brigade brigade;
   String secondName;
   String firstName;
@@ -122,6 +124,7 @@ class OrderById {
     id: json["id"] == null ? null : json["id"],
     user: json["user"] == null ? null : User.fromJson(json["user"]),
     brigadeId: json["brigadeId"] == null ? null : json["brigadeId"],
+    comment: json["comment"] == null ? null : json["comment"],
     brigade: json["brigade"] == null ? null : Brigade.fromJson(json["brigade"]),
     secondName: json["secondName"] == null ? null : json["secondName"],
     firstName: json["firstName"] == null ? null : json["firstName"],
@@ -153,6 +156,7 @@ class OrderById {
     "id": id == null ? null : id,
     "user": user == null ? null : user.toJson(),
     "brigadeId": brigadeId == null ? null : brigadeId,
+    "comment": comment == null ? null : comment,
     "brigade": brigade == null ? null : brigade.toJson(),
     "secondName": secondName == null ? null : secondName,
     "firstName": firstName == null ? null : firstName,

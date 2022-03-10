@@ -105,7 +105,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         child: Text(
                           'Наряд №${order?.id ?? '-'}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
                       ),
-                      Row(
+                      order?.state == 1 ? Container() : Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           order == null ? Container() : GestureDetector(
@@ -131,7 +131,33 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                 });
                               });
                             },
-                          )
+                          ),
+                          SizedBox(width: 10),
+                          order == null ? Container() : GestureDetector(
+                            child: Icon(
+                              Icons.comment, color: Colors.white,),
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                      builder: (c) => NaryadDescription(order: order!, isComment: true,))
+                              ).then((value) {
+                                if(value != null && value == []) return;
+                                setState(() {
+                                  order = null;
+                                });
+                                ApiClient().getOrderById(widget.order.id).then((value) {
+                                  setState(() {
+                                    order = value!;
+                                    order?.history = [];
+                                    order?.user = null;
+                                    order?.brigade = null;
+                                  });
+                                });
+                              });
+                            },
+                          ),
+                          SizedBox(width: 5),
                         ],
                       )
                     ],
@@ -189,7 +215,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                               containedText('Доп.сведения', false, true, '', () {
                                 HapticFeedback.lightImpact();
                                 Navigator.of(context).push(
-                                  CupertinoPageRoute(builder: (c) => NaryadDescription(order: order!))
+                                  CupertinoPageRoute(builder: (c) => NaryadDescription(order: order!, isComment: false,))
                                 );
                               }),
                               Spacer(),
@@ -245,8 +271,11 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                             context: context,
                             conditionBuilder: (c) => order!.state == 1,
                             widgetBuilder: (c) => GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 HapticFeedback.lightImpact();
+                                setState(() {
+                                  loading = true;
+                                });
                                 ApiClient().editOrder({
                                   ...order!.toJson(),
                                   "state": 2
@@ -511,7 +540,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => order!.state == 2 || order!.state == 1,
+                            conditionBuilder: (c) => order!.state != 4,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () async {
                                 HapticFeedback.lightImpact();
@@ -564,14 +593,20 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                       },
                                     )
                                 );
-                                setState(() {
-                                  loading = false;
-                                });
-                                if(submitted == null) return;
+                                if(submitted == null) {
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  return;
+                                }
                                 ApiClient().editOrder({
                                   ...order!.toJson(),
-                                  "state": 6
+                                  "state": 6,
+                                  "cause": submitted
                                 }).then((value) {
+                                  setState(() {
+                                    loading = false;
+                                  });
                                   Navigator.of(context).pop(true);
                                 });
                               },
