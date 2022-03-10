@@ -323,14 +323,177 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                             context: context,
                             conditionBuilder: (c) => order!.state == 4,
                             widgetBuilder: (c) => GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 HapticFeedback.lightImpact();
+                                var form = await showDialog(
+                                    context: context,
+                                    useRootNavigator: false,
+                                    builder: (c) {
+                                      TextEditingController form1 = TextEditingController();
+                                      TextEditingController form2 = TextEditingController();
+                                      TextEditingController form3 = TextEditingController();
+                                      return StatefulBuilder(
+                                          builder: (context2, setState) {
+                                            return Dialog(
+                                              insetPadding: EdgeInsets.all(40),
+                                              backgroundColor: Color(0xff2c2e33),
+                                              child: Container(
+                                                height: 450,
+                                                padding: EdgeInsets.all(20),
+                                                child: Column(
+                                                  children: [
+                                                    Center(
+                                                      child: Text('Укажите данные:', style: TextStyle(color: Colors.white, fontSize: 20)),
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    Container(
+                                                      margin: EdgeInsets.only(bottom: 22),
+                                                      child: TextField(
+                                                        style: TextStyle(color: Colors.white),
+                                                        controller: form1,
+                                                        onChanged: (v) {
+                                                          setState(() {
+
+                                                          });
+                                                        },
+                                                        enableSuggestions: false,
+                                                        autocorrect: false,
+                                                        decoration: InputDecoration(
+                                                            enabledBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            filled: true,
+                                                            hintStyle: TextStyle(color: Color(0xff7F8489)),
+                                                            hintText: "Номер сопр. листа",
+                                                            fillColor: Color(0xff22252A).withOpacity(0.5)
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(bottom: 22),
+                                                      child: TextField(
+                                                        style: TextStyle(color: Colors.white),
+                                                        controller: form2,
+                                                        onChanged: (v) {
+                                                          setState(() {
+
+                                                          });
+                                                        },
+                                                        enableSuggestions: false,
+                                                        autocorrect: false,
+                                                        decoration: InputDecoration(
+                                                            enabledBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            filled: true,
+                                                            hintStyle: TextStyle(color: Color(0xff7F8489)),
+                                                            hintText: "Должность",
+                                                            fillColor: Color(0xff22252A).withOpacity(0.5)
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(bottom: 22),
+                                                      child: TextField(
+                                                        style: TextStyle(color: Colors.white),
+                                                        controller: form3,
+                                                        onChanged: (v) {
+                                                          setState(() {
+
+                                                          });
+                                                        },
+                                                        enableSuggestions: false,
+                                                        autocorrect: false,
+                                                        decoration: InputDecoration(
+                                                            enabledBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Color(0xff2b2f34)),
+                                                              borderRadius: BorderRadius.circular(15),
+                                                            ),
+                                                            filled: true,
+                                                            hintStyle: TextStyle(color: Color(0xff7F8489)),
+                                                            hintText: "ФИО",
+                                                            fillColor: Color(0xff22252A).withOpacity(0.5)
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () async {
+                                                        HapticFeedback.lightImpact();
+                                                        if(form1.text.isEmpty || form2.text.isEmpty || form3.text.isEmpty) {
+
+                                                        } else {
+                                                          Navigator.of(context).pop(
+                                                            {
+                                                              "formNumber": form1.text,
+                                                              "formPosition": form2.text,
+                                                              "formInitial": form3.text
+                                                            }
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+                                                        margin: EdgeInsets.only(bottom: 22),
+                                                        decoration: BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment.topLeft,
+                                                                end: Alignment.bottomRight,
+                                                                colors: [
+                                                                  Color(0xffFF5574),
+                                                                  Color(0xffE9454F),
+                                                                  Color(0xffDC2450)
+                                                                ]
+                                                            ),
+                                                            border: Border.all(color: Color(0xffFD6B81), width: 2),
+                                                            borderRadius: BorderRadius.circular(20)
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(form1.text.isEmpty || form2.text.isEmpty || form3.text.isEmpty ? 'Заполните данные' : 'Отправить', style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Lato'),),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                      );
+                                    }
+                                );
+                                if(form == null) return;
                                 setState(() {
                                   loading = true;
                                 });
                                 ApiClient().editOrder({
                                   ...order!.toJson(),
-                                  "state": 5
+                                  "state": 5,
+                                  ...form
                                 }).then((value) {
                                   Navigator.of(context).pop(true);
                                 });
