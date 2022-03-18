@@ -92,6 +92,15 @@ class LocalService {
       return false;
     }
   }
+  Future clear() async {
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      await sp.clear();
+      return true;
+    } catch(err) {
+      return false;
+    }
+  }
 }
 class ApiClient {
   Future logIn(String login, String password, bool save, [String? role]) async {

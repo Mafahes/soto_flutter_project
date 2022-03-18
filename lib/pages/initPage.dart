@@ -158,7 +158,7 @@ class _InitPageState extends State<InitPage> {
             body: [NaryadPage(), OrderPage(), SettingsPage(
               onExit: () {
                 debouncer.cancel();
-                LocalService().delKey().then((value) {
+                LocalService().clear().then((value) {
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (ctx) => LoginPage()
                       ), (route) => false);

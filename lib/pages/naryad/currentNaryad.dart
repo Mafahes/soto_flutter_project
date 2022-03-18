@@ -564,7 +564,11 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                                                 ),
                                                 DropdownButton(
                                                   value: selectedValue,
-                                                  items: dropdownItems,
+                                                  items: [
+                                                    DropdownMenuItem(child: Text("Тело отсутствует"),value: "Тело отсутствует"),
+                                                    DropdownMenuItem(child: Text("Отказ от транспортировки"),value: "Отказ от транспортировки"),
+                                                    ...dropdownItems
+                                                  ].where((element) => order!.state != 3 ? (element.value != "Тело отсутствует" && element.value != "Отказ от транспортировки") : true).toList(),
                                                   onChanged: (String? value) {
                                                     setState(() {
                                                       selectedValue = value ?? '';

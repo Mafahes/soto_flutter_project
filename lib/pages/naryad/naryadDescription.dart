@@ -121,7 +121,7 @@ class _NaryadDescriptionState extends State<NaryadDescription> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            widget.isComment ? Container() : GestureDetector(
+                            !widget.isComment ? Container() : GestureDetector(
                               onTap: () async {
                                 HapticFeedback.lightImpact();
                                 setState(() {
