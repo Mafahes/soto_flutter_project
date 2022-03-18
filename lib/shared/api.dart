@@ -250,7 +250,7 @@ class ApiClient {
     Dio dio = await DioClient().instance();
     try {
       var response = await dio.post(
-          '${Prefs.API_URL}api/user/set-state?state=${status.index}&cause=$cause');
+          '${Prefs.API_URL}api/user/set-state?state=${status.index}${cause == '' ? '' : '&cause=$cause'}');
       return true;
     } catch(e, s) {
       return null;
