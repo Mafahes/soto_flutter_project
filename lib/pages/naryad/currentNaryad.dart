@@ -540,7 +540,7 @@ class _CurrentNaryadPageState extends State<CurrentNaryadPage> {
                         ),
                         Conditional.single(
                             context: context,
-                            conditionBuilder: (c) => order!.state != 4,
+                            conditionBuilder: (c) => order!.state != 4 && order!.state != 7,
                             widgetBuilder: (c) => GestureDetector(
                               onTap: () async {
                                 HapticFeedback.lightImpact();
