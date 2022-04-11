@@ -31,7 +31,7 @@ enum OrderStatus {
   denided
 }
 class Prefs {
-  static const API_URL = 'https://soto.3dcafe.ru/';
+  static const API_URL = 'http://195.9.78.14/';
   static const orderStatuses = ["Новая", "Не подтверждена", "Принята", "Прибыл на место", "Следует в морг", "Сдал в морг", "Отклонена", "Отказ"];
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
