@@ -32,9 +32,11 @@ class Order {
     this.isDelete,
     this.dateAdd,
     this.files,
+    this.code
   });
 
   int id;
+  dynamic code;
   int brigadeId;
   String source;
   String secondName;
@@ -64,6 +66,7 @@ class Order {
     String firstName,
     String patronymic,
     bool sex,
+    dynamic code,
     int age,
     String deathId,
     String address,
@@ -81,6 +84,7 @@ class Order {
   }) =>
       Order(
         id: id ?? this.id,
+        code: code ?? this.code,
         brigadeId: brigadeId ?? this.brigadeId,
         source: source ?? this.source,
         secondName: secondName ?? this.secondName,
@@ -105,6 +109,7 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
     id: json["id"] == null ? null : json["id"],
+    code: json["code"] == null ? null : json["code"],
     brigadeId: json["brigadeId"] == null ? null : json["brigadeId"],
     source: json["source"] == null ? null : json["source"],
     secondName: json["secondName"] == null ? null : json["secondName"],
@@ -129,6 +134,7 @@ class Order {
 
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
+    "code": code == null ? null : code,
     "brigadeId": brigadeId == null ? null : brigadeId,
     "source": source == null ? null : source,
     "secondName": secondName == null ? null : secondName,

@@ -104,7 +104,7 @@ class _NaryadPageState extends State<NaryadPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Наряд #${e.id}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontWeight: FontWeight.w500, fontSize: 18),),
+                        Text('Наряд #${e.code}', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontWeight: FontWeight.w500, fontSize: 18),),
                       ],
                     ),
                   ),
