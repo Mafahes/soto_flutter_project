@@ -12,6 +12,7 @@ String selfToJson(Self data) => json.encode(data.toJson());
 class Self {
   Self({
     this.nummer,
+    this.code,
     this.dateBirt,
     this.secondName,
     this.firstName,
@@ -40,9 +41,11 @@ class Self {
     this.inits,
     this.state,
     this.email,
+    this.userName
   });
 
   int nummer;
+  String code;
   dynamic dateBirt;
   String secondName;
   String firstName;
@@ -56,6 +59,7 @@ class Self {
   DateTime lastLogin;
   bool isOnline;
   String roleName;
+  String userName;
   bool lockoutEnabled;
   String uid;
   double longitude;
@@ -74,9 +78,11 @@ class Self {
 
   Self copyWith({
     int nummer,
+    String code,
     dynamic dateBirt,
     String secondName,
     String firstName,
+    String userName,
     String patronymic,
     dynamic sex,
     DateTime dateBirth,
@@ -105,8 +111,10 @@ class Self {
   }) =>
       Self(
         nummer: nummer ?? this.nummer,
+        code: code ?? this.code,
         dateBirt: dateBirt ?? this.dateBirt,
         secondName: secondName ?? this.secondName,
+        userName: userName ?? this.userName,
         firstName: firstName ?? this.firstName,
         patronymic: patronymic ?? this.patronymic,
         sex: sex ?? this.sex,
@@ -136,8 +144,10 @@ class Self {
       );
 
   factory Self.fromJson(Map<String, dynamic> json) => Self(
+    code: json["code"] == null ? null : json["code"],
     nummer: json["nummer"] == null ? null : json["nummer"],
     dateBirt: json["dateBirt"],
+    userName: json["userName"] == null ? null : json["userName"],
     secondName: json["secondName"] == null ? null : json["secondName"],
     firstName: json["firstName"] == null ? null : json["firstName"],
     patronymic: json["patronymic"] == null ? null : json["patronymic"],
@@ -169,9 +179,11 @@ class Self {
 
   Map<String, dynamic> toJson() => {
     "nummer": nummer == null ? null : nummer,
+    "code": code == null ? null : code,
     "dateBirt": dateBirt,
     "secondName": secondName == null ? null : secondName,
     "firstName": firstName == null ? null : firstName,
+    "userName": userName == null ? null : userName,
     "patronymic": patronymic == null ? null : patronymic,
     "sex": sex,
     "dateBirth": dateBirth == null ? null : dateBirth.toIso8601String(),

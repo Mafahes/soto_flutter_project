@@ -76,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         Text(
                           'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
                         SizedBox(height: 4),
-                        Text(' (v2.0)', style: TextStyle(color: Colors.grey, fontSize: 8),)
+                        Text(' (v2.1)', style: TextStyle(color: Colors.grey, fontSize: 8),)
                       ],
                     ),
                   )
@@ -94,7 +94,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingContainer(user?.firstName ?? '-'),
                     SettingContainer(user?.patronymic ?? '-'),
                     SettingContainer(user?.roleName ?? '-'),
-                    SettingContainer('Табельный номер №${user?.inits ?? '-'}'),
+                    SettingContainer('Табельный номер №${user?.userName ?? '-'}'),
                     Spacer(),
                     GestureDetector(
                       onTap: () async {
