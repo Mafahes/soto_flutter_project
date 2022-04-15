@@ -74,9 +74,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold),),
+                          'Настройки', style: TextStyle(color: Colors.white, fontFamily: 'Lato', fontSize: 20.sp, fontWeight: FontWeight.bold)),
                         SizedBox(height: 4),
-                        Text(' (v2.1)', style: TextStyle(color: Colors.grey, fontSize: 8),)
+                        Text(' (v2.1)', style: TextStyle(color: Colors.grey, fontSize: 8))
                       ],
                     ),
                   )
